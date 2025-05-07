@@ -1,9 +1,21 @@
 package app
 
 import (
-	"database/sql"
+	"context"
+	"errors"
+	"fmt"
+	"gin/internal/config"
+	"gin/internal/controllers"
+	"gin/internal/repository/postgres"
+	"gin/internal/services"
 	"gin/pkg/database"
-	"log"
+	"gin/pkg/handler"
+	"gin/pkg/server"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,30 +23,57 @@ import (
 var db = make(map[string]string)
 
 type App struct {
-	db     *sql.DB
-	router *gin.Engine
+	config  *config.Config
+	handler *handler.Handler
+	srv     *server.Server
+	store   database.Database
 }
 
-func (s *App) configureRouter() {
-	// Example route: a GET endpoint to check if the server is up
-	s.router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "pong"})
-	})
-	s.router.Use()
-	// You can add more routes here, such as routes for accessing your database, handling POST requests, etc.
-}
-
-func Start() {
-	router := gin.Default()
-
-	db, err := database.Connect()
-	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+func NewApp(config config.Config) *App {
+	store := database.NewGormDatabase(config.Connection).GetDB()
+	repo := postgres.NewRepository(store)
+	app := &App{
+		config:  &config,
+		handler: handler.NewHandler(services.NewService(repo)),
+		srv:     new(server.Server),
+		store:   database.NewGormDatabase(config.Connection),
 	}
-	defer db.Close()
-
-	app := &App{db: db, router: router}
-
 	app.configureRouter()
-	app.router.Run(":8080")
+	return app
+}
+
+func (app *App) Start() error {
+	go func() {
+		if err := app.srv.Run(app.config, app.handler); !errors.Is(err, http.ErrServerClosed) {
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+
+	<-quit
+
+	const timeout = 5 * time.Second
+
+	ctx, shutdown := context.WithTimeout(context.Background(), timeout)
+	defer shutdown()
+
+	if err := app.srv.Stop(ctx); err != nil {
+		_ = fmt.Errorf("failed to stop server: %v", err)
+	}
+	return nil
+}
+
+func (app *App) configureRouter() {
+	router := app.handler.Routing()
+	router.Use(
+		gin.Recovery(),
+		gin.Logger(),
+	)
+	repo := postgres.NewRepository(app.store.GetDB())
+
+	// Regiuster service
+	controller := controllers.NewBaseController(services.NewService(repo))
+	controller.AddSingleController(controllers.NewUserController)
+	controller.RegisterRoutes(router)
 }

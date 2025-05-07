@@ -1,39 +1,20 @@
-version: "3.8"
+version: '3.8'
 
 services:
-  db:
-    image: postgres:latest
-    container_name: postgres_db
+  postgres:
+    image: postgres:15
+    container_name: my_postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: your-password
-      POSTGRES_DB: calhounio_demo
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydb
+      TZ: UTC
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app-network
-
-  app:
-    build: .
-    container_name: go_app
-    environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: your-password
-      DB_NAME: calhounio_demo
-    depends_on:
-      - db
-    networks:
-      - app-network
-    ports:
-      - "8080:8080"
+    command: ["postgres", "-c", "ssl=off"]
 
 volumes:
   postgres_data:
-
-networks:
-  app-network:
-    driver: bridge

@@ -1,35 +1,39 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
+	"log"
 
-	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "your_username"
-	password = "your-password"
-	dbname   = "calhounio_demo"
-)
+type Database interface {
+	GetDB() *gorm.DB
+}
+type GormDatabase struct {
+	db *gorm.DB
+}
 
-func Connect() (*sql.DB, error) {
-	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	db, err := sql.Open("postgres", connStr)
+func NewGormDatabase(cfg Config) Database {
+	dsn := fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s TimeZone=%s",
+		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSLMode, cfg.TimeZone,
+	)
+	//s := &sql.DB{}
+	//postgres.New(postgres.Config{
+	//	Conn: s,
+	//	DSN:  dsn,
+	//})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return nil, err
+		log.Printf("Failed to connect to database: %v", err)
+		return nil
 	}
+	log.Print("Connected to PostgreSQL successfully!")
+	return &GormDatabase{db: db}
+}
 
-	err = db.Ping()
-	if err != nil {
-		db.Close()
-		return nil, fmt.Errorf("failed to ping database: %w", err)
-	}
-
-	fmt.Println("Successfully connected to PostgreSQL database!")
-	return db, nil
+func (g *GormDatabase) GetDB() *gorm.DB {
+	return g.db
 }
