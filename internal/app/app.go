@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"gin/internal/config"
 	"gin/internal/controllers"
+	"gin/internal/database/migrattion"
 	"gin/internal/repository/postgres"
 	"gin/internal/services"
 	"gin/pkg/database"
@@ -18,6 +19,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/swag/example/basic/docs"
 )
 
 var db = make(map[string]string)
@@ -39,6 +43,7 @@ func NewApp(config config.Config) *App {
 		store:   database.NewGormDatabase(config.Connection),
 	}
 	app.configureRouter()
+	migrattion.RunMigrations(app.store)
 	return app
 }
 
@@ -71,6 +76,8 @@ func (app *App) configureRouter() {
 		gin.Logger(),
 	)
 	repo := postgres.NewRepository(app.store.GetDB())
+	docs.SwaggerInfo.BasePath = "/api/v1"
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	// Regiuster service
 	controller := controllers.NewBaseController(services.NewService(repo))

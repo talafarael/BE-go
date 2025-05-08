@@ -6,7 +6,7 @@ import (
 )
 
 type UserService interface {
-	Get(id string) models.User
+	Get(id string) *models.User
 }
 
 type userService struct {
@@ -19,9 +19,12 @@ func NewUserService(repo repository.Store) UserService {
 	}
 }
 
-func (u *userService) Get(id string) models.User {
-	return models.User{
+func (u *userService) Get(id string) *models.User {
+	user := &models.User{
 		Name:  "afa",
 		Email: "email@example.com",
 	}
+
+	u.repo.User().GetUserByID(1)
+	return user
 }
