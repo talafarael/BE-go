@@ -1,6 +1,8 @@
 package services
 
-import "gin/internal/repository"
+import (
+	"gin/internal/repository"
+)
 
 type Service interface {
 	AuthService

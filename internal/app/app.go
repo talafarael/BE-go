@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gin/docs"
 	"gin/internal/config"
 	"gin/internal/controllers"
 	"gin/internal/database/migrattion"
@@ -21,7 +22,6 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/swaggo/swag/example/basic/docs"
 )
 
 var db = make(map[string]string)
@@ -76,7 +76,9 @@ func (app *App) configureRouter() {
 		gin.Logger(),
 	)
 	repo := postgres.NewRepository(app.store.GetDB())
-	docs.SwaggerInfo.BasePath = "/api/v1"
+
+	// swagger
+	docs.SwaggerInfo.BasePath = "/"
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	// Regiuster service

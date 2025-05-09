@@ -1,0 +1,25 @@
+definitions:
+  models.User:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /users:
+    get:
+      description: return list of all users from the database
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: return list of all
+      tags:
+      - Users
+swagger: "2.0"
