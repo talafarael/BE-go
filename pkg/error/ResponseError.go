@@ -23,9 +23,16 @@ func (e *ResponseError) Error() string {
 var (
 	ErrInvalidCredentials = NewResponseError(401, "invalid credentials")
 	ErrInternalServer     = NewResponseError(500, "Internal server error")
-	ErrJWTCreationFailed  = NewResponseError(500, "JWT error: failed to create token")
+	// jwt
+	ErrInvalidToken      = NewResponseError(401, "invalid token")
+	ErrInvalidClaims     = NewResponseError(400, "could not parse claims")
+	ErrInvalidIDClaim    = NewResponseError(400, "id claim missing or invalid")
+	ErrJWTCreationFailed = NewResponseError(500, "JWT error: failed to create token")
 	// user
 	ErrUserAlredy                = NewResponseError(401, "Email alredy exists")
 	ErrUserNotFound              = NewResponseError(401, "User notr found")
 	ErrPasswordOrEmailNotCorrect = NewResponseError(401, "Invalid email or password")
+	// authoriztion err
+	ErrUnauthorized = NewResponseError(401, "Unauthorized")
+	ErrForbidden    = NewResponseError(403, "Forbidden")
 )

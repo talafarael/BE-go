@@ -6,25 +6,31 @@ import (
 )
 
 type UserService interface {
-	Get(id string) *userModels.User
+	Get(id string) (userModels.User, error)
 }
 
 type userService struct {
-	repo repository.Store
+	UserServiceOptions
+}
+type UserServiceOptions struct {
+	Repo repository.Store
 }
 
-func NewUserService(repo repository.Store) UserService {
+func NewUserService(options UserServiceOptions) UserService {
 	return &userService{
-		repo: repo,
+		UserServiceOptions: options,
 	}
 }
 
-func (u *userService) Get(id string) *userModels.User {
-	user := &userModels.User{
-		Name:  "afa",
-		Email: "email@example.com",
-	}
+func (u *userService) Get(token string) (userModels.User, error) {
+	//id, err := u.JwtService.VerifyToken(token)
+	//if err != nil {
+	//return userModels.User{}, err
+	//}
 
-	u.repo.User().GetUserByID(1)
-	return user
+	user, err := u.Repo.User().GetUserByID(1)
+	if err != nil {
+		return userModels.User{}, err
+	}
+	return *user, nil
 }

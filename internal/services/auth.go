@@ -3,7 +3,6 @@ package services
 import (
 	userModels "gin/internal/models/user"
 	"gin/internal/repository"
-	response_error "gin/pkg/error"
 	"gin/pkg/hash"
 	"gin/pkg/jwt"
 )
@@ -14,45 +13,50 @@ type AuthService interface {
 }
 
 type authService struct {
-	repo repository.Store
+	AuthServiceOptions
+}
+type AuthServiceOptions struct {
+	Repo        repository.Store
+	JwtService  jwt.JwtService
+	HashService hash.HashService
 }
 
 // construcotr
-func NewAuthService(repo repository.Store) AuthService {
+func NewAuthService(options AuthServiceOptions) AuthService {
 	return &authService{
-		repo: repo,
+		AuthServiceOptions: options,
 	}
 }
 
 func (a *authService) Register(user *userModels.RegisterDto) (string, error) {
-	hashPassword, err := hash.HashPassword(user.Password)
+	hashPassword, err := a.HashService.HashPassword(user.Password)
 	if err != nil {
-		return "", response_error.ErrInternalServer
+		return "", err
 	}
 	user.Password = hashPassword
-	newUser, err := a.repo.User().CreateUser(user)
+	newUser, err := a.Repo.User().CreateUser(user)
 	if err != nil {
-		return "", response_error.ErrUserAlredy
+		return "", err
 	}
-	token, err := jwt.CreateToken(newUser.ID)
+	token, err := a.JwtService.CreateToken(newUser.ID)
 	if err != nil {
-		return "", response_error.ErrJWTCreationFailed
+		return "", err
 	}
 	return token, nil
 }
 
 func (a *authService) Login(userDto *userModels.LoginDto) (string, error) {
-	user, err := a.repo.User().GetUserByEmail(userDto.Email)
+	user, err := a.Repo.User().GetUserByEmail(userDto.Email)
 	if err != nil {
-		return "", response_error.ErrPasswordOrEmailNotCorrect
+		return "", err
 	}
-	isPasswordValid := hash.CheckPasswordHash(userDto.Password, user.Password)
+	isPasswordValid := a.HashService.CheckPasswordHash(userDto.Password, user.Password)
 	if !isPasswordValid {
-		return "", response_error.ErrPasswordOrEmailNotCorrect
+		return "", err
 	}
-	token, err := jwt.CreateToken(user.ID)
+	token, err := a.JwtService.CreateToken(user.ID)
 	if err != nil {
-		return "", response_error.ErrJWTCreationFailed
+		return "", err
 	}
 	return token, nil
 }

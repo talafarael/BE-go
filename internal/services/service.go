@@ -2,21 +2,33 @@ package services
 
 import (
 	"gin/internal/repository"
+	"gin/pkg/hash"
+	"gin/pkg/jwt"
 )
 
 type Service interface {
 	AuthService
 	UserService
 }
-
+type ServiceOptions struct {
+	Repo        repository.Store
+	JwtService  jwt.JwtService
+	HashService hash.HashService
+}
 type service struct {
 	AuthService
 	UserService
 }
 
-func NewService(repo repository.Store) Service {
+func NewService(options *ServiceOptions) Service {
 	return &service{
-		AuthService: NewAuthService(repo),
-		UserService: NewUserService(repo),
+		AuthService: NewAuthService(AuthServiceOptions{
+			Repo:        options.Repo,
+			JwtService:  options.JwtService,
+			HashService: options.HashService,
+		}),
+		UserService: NewUserService(UserServiceOptions{
+			Repo: options.Repo,
+		}),
 	}
 }

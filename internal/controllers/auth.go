@@ -46,6 +46,17 @@ func (uc *AuthController) Register(ctx *gin.Context) {
 	})
 }
 
+// Login
+// @Summary      Login account
+// @Description  Login account
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        body  body  userModels.LoginDto  true  "User login data"
+// @Success      200  {object}  userModels.AuthReponse
+// @Failure      404  {object}  response_error.ResponseError
+// @Failure      500  {object}  response_error.ResponseError
+// @Router       /auth/login [post]
 func (uc *AuthController) Login(ctx *gin.Context) {
 	var user userModels.LoginDto
 	if err := ctx.ShouldBindJSON(&user); err != nil {

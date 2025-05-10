@@ -8,10 +8,15 @@ import (
 	"gin/internal/config"
 	"gin/internal/controllers"
 	"gin/internal/database/migrattion"
+	"gin/internal/repository"
 	"gin/internal/repository/postgres"
 	"gin/internal/services"
+	check_auth_header "gin/pkg/checkAuthHeader"
 	"gin/pkg/database"
 	"gin/pkg/handler"
+	"gin/pkg/hash"
+	"gin/pkg/jwt"
+	"gin/pkg/middleware"
 	"gin/pkg/server"
 	"net/http"
 	"os"
@@ -36,9 +41,10 @@ type App struct {
 func NewApp(config config.Config) *App {
 	store := database.NewGormDatabase(config.Connection).GetDB()
 	repo := postgres.NewRepository(store)
+	services := ConfigService(repo, &config)
 	app := &App{
 		config:  &config,
-		handler: handler.NewHandler(services.NewService(repo)),
+		handler: handler.NewHandler(*services),
 		srv:     new(server.Server),
 		store:   database.NewGormDatabase(config.Connection),
 	}
@@ -69,19 +75,46 @@ func (app *App) Start() error {
 	return nil
 }
 
+func ConfigService(repo repository.Store, config *config.Config) *services.Service {
+	hashService := hash.HashService{}
+	jwtService := jwt.NewJwtService(config.Secret)
+
+	service := services.NewService(
+		&services.ServiceOptions{
+			Repo:        repo,
+			JwtService:  jwtService,
+			HashService: hashService,
+		})
+	return &service
+}
+
+func ConfigMiddleware(repo repository.Store, config *config.Config) *middleware.AuthMiddleware {
+	jwtService := jwt.NewJwtService(config.Secret)
+	checkAuthHeader := check_auth_header.CheckAuthHeader{}
+
+	authMiddleware := middleware.NewAuthMiddleware(
+		&middleware.AuthMiddlewareOptions{
+			CheckAuthHeader: &checkAuthHeader,
+			JwtService:      &jwtService,
+			Repo:            &repo,
+		})
+	return &authMiddleware
+}
+
 func (app *App) configureRouter() {
 	router := app.handler.Routing()
 	router.Use(
 		gin.Recovery(),
 		gin.Logger(),
 	)
-	repo := postgres.NewRepository(app.store.GetDB())
-
 	// swagger
 	docs.SwaggerInfo.BasePath = "/"
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-
+	repo := postgres.NewRepository(app.store.GetDB())
 	// Regiuster service
-	controller := controllers.NewBaseController(services.NewService(repo))
+	services := ConfigService(repo, app.config)
+	middleware := ConfigMiddleware(repo, app.config)
+
+	controller := controllers.NewBaseController(services, middleware)
 	controller.RegisterRoutes(router)
 }

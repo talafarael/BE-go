@@ -3,7 +3,7 @@ package load_config
 import (
 	"gin/internal/config"
 	"gin/pkg/database"
-	"gin/pkg/get_env"
+	get_env "gin/pkg/getEnv"
 )
 
 func LoadConfig() config.Config {
@@ -18,5 +18,6 @@ func LoadConfig() config.Config {
 			SSLMode:  get_env.GetEnv("DB_SSLMODE", "disable"),
 			TimeZone: get_env.GetEnv("DB_TIMEZONE", "UTC"),
 		},
+		Secret: get_env.GetEnv("SECRET", "secret"),
 	}
 }

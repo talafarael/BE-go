@@ -1,49 +1,60 @@
 package jwt
 
 import (
-	"errors"
 	"fmt"
+	response_error "gin/pkg/error"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var secretKey = []byte("your-secret-key")
+type JwtService struct {
+	secretKey string
+}
 
-func CreateToken(id uint) (string, error) {
+func NewJwtService(secretKey string) JwtService {
+	return JwtService{
+		secretKey: secretKey,
+	}
+}
+
+func (j *JwtService) CreateToken(id uint) (string, error) {
 	claims := jwt.MapClaims{
 		"id":  id,
 		"exp": time.Now().Add(time.Hour * 1).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	return token.SignedString(secretKey)
+	strToken, err := token.SignedString([]byte(j.secretKey))
+	if err != nil {
+		return "", response_error.ErrJWTCreationFailed
+	}
+	return strToken, nil
 }
 
-func VerifyToken(tokenString string) (uint, error) {
+func (j *JwtService) VerifyToken(tokenString string) (uint, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("неожиданный метод подписи: %v", token.Header["alg"])
 		}
-		return secretKey, nil
+		return []byte(j.secretKey), nil
 	})
 	if err != nil {
-		return 0, err
+		return 0, response_error.ErrInvalidCredentials
 	}
 
 	if !token.Valid {
-		return 0, errors.New("invalid token")
+		return 0, response_error.ErrInvalidToken
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return 0, errors.New("could not parse claims")
+		return 0, response_error.ErrInvalidClaims
 	}
 
 	idFloat, ok := claims["id"].(float64)
 	if !ok {
-		return 0, errors.New("id claim missing or invalid")
+		return 0, response_error.ErrInvalidIDClaim
 	}
 
 	return uint(idFloat), nil
