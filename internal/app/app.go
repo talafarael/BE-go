@@ -83,6 +83,5 @@ func (app *App) configureRouter() {
 
 	// Regiuster service
 	controller := controllers.NewBaseController(services.NewService(repo))
-	controller.AddSingleController(controllers.NewUserController)
 	controller.RegisterRoutes(router)
 }

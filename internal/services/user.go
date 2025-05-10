@@ -1,12 +1,12 @@
 package services
 
 import (
-	"gin/internal/models"
+	userModels "gin/internal/models/user"
 	"gin/internal/repository"
 )
 
 type UserService interface {
-	Get(id string) *models.User
+	Get(id string) *userModels.User
 }
 
 type userService struct {
@@ -19,8 +19,8 @@ func NewUserService(repo repository.Store) UserService {
 	}
 }
 
-func (u *userService) Get(id string) *models.User {
-	user := &models.User{
+func (u *userService) Get(id string) *userModels.User {
+	user := &userModels.User{
 		Name:  "afa",
 		Email: "email@example.com",
 	}

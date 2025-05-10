@@ -1,10 +1,11 @@
 package repository
 
-import "gin/internal/models"
+import userModels "gin/internal/models/user"
 
 type UserRepository interface {
-	CreateUser(user *models.User) (models.User, error)
-	GetUserByID(id uint) (*models.User, error)
-	UpdateUser(user *models.User) error
+	CreateUser(user *userModels.RegisterDto) (userModels.User, error)
+	GetUserByID(id uint) (*userModels.User, error)
+	GetUserByEmail(email string) (*userModels.User, error)
+	UpdateUser(user *userModels.User) error
 	DeleteUser(id int) error
 }

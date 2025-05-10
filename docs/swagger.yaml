@@ -1,4 +1,18 @@
 definitions:
+  models.AuthReponse:
+    properties:
+      token:
+        type: string
+    type: object
+  models.RegisterDto:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
   models.User:
     properties:
       email:
@@ -7,11 +21,50 @@ definitions:
         type: integer
       name:
         type: string
+      password:
+        type: string
+    type: object
+  response_error.ResponseError:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
     type: object
 info:
   contact: {}
 paths:
-  /users:
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register account
+      parameters:
+      - description: User registration data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegisterDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthReponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response_error.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response_error.ResponseError'
+      summary: Register account
+      tags:
+      - auth
+  /user:
     get:
       description: return list of all users from the database
       responses:

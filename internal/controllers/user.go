@@ -9,12 +9,12 @@ import (
 
 type UserController struct {
 	BaseController
-	userService services.UserService
+	userService services.Service
 }
 
-func NewUserController(base *BaseController) Controller {
+func NewUserController(service services.Service) *UserController {
 	return &UserController{
-		userService: base.service,
+		userService: service,
 	}
 }
 
@@ -30,6 +30,6 @@ func (uc *UserController) GetUser(ctx *gin.Context) {
 }
 
 // RegisterRoutes sets up the routes for the UserController.
-func (u *UserController) RegisterRoutes(router *gin.Engine) {
+func (u *UserController) UserRoutes(router *gin.Engine) {
 	router.GET("/user", u.GetUser)
 }

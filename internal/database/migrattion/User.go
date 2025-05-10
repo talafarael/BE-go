@@ -1,7 +1,7 @@
 package migrattion
 
 import (
-	"gin/internal/models"
+	userModels "gin/internal/models/user"
 	Migrate2 "gin/pkg/base_migrate"
 	"log"
 )
@@ -12,5 +12,5 @@ type UserMigration struct {
 
 func (u UserMigration) Up() error {
 	log.Println("Running UserMigration...")
-	return u.Migrate.Migrate(&models.User{})
+	return u.Migrate.Migrate(&userModels.User{})
 }

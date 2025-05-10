@@ -1,14 +1,16 @@
 package services
 
 import (
-	customErrors "gin/internal/domain/customErrors"
-	"gin/internal/models"
+	userModels "gin/internal/models/user"
 	"gin/internal/repository"
-	hash_password "gin/pkg/hashPassword"
+	response_error "gin/pkg/error"
+	"gin/pkg/hash"
+	"gin/pkg/jwt"
 )
 
 type AuthService interface {
-	Register(user *models.User) (models.User, error)
+	Register(user *userModels.RegisterDto) (string, error)
+	Login(userDto *userModels.LoginDto) (string, error)
 }
 
 type authService struct {
@@ -22,15 +24,35 @@ func NewAuthService(repo repository.Store) AuthService {
 	}
 }
 
-func (a *authService) Register(user *models.User) (models.User, error) {
-	hashPassword, err := hash_password.HashPassword(user.Password)
+func (a *authService) Register(user *userModels.RegisterDto) (string, error) {
+	hashPassword, err := hash.HashPassword(user.Password)
 	if err != nil {
-		return models.User{}, err
+		return "", response_error.ErrInternalServer
 	}
 	user.Password = hashPassword
 	newUser, err := a.repo.User().CreateUser(user)
 	if err != nil {
-		return models.User{}, customErrors.ErrUserAlreadyExists
+		return "", response_error.ErrUserAlredy
 	}
-	return newUser, nil
+	token, err := jwt.CreateToken(newUser.ID)
+	if err != nil {
+		return "", response_error.ErrJWTCreationFailed
+	}
+	return token, nil
+}
+
+func (a *authService) Login(userDto *userModels.LoginDto) (string, error) {
+	user, err := a.repo.User().GetUserByEmail(userDto.Email)
+	if err != nil {
+		return "", response_error.ErrPasswordOrEmailNotCorrect
+	}
+	isPasswordValid := hash.CheckPasswordHash(userDto.Password, user.Password)
+	if !isPasswordValid {
+		return "", response_error.ErrPasswordOrEmailNotCorrect
+	}
+	token, err := jwt.CreateToken(user.ID)
+	if err != nil {
+		return "", response_error.ErrJWTCreationFailed
+	}
+	return token, nil
 }

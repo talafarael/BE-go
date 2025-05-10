@@ -1,34 +1,46 @@
 package postgres
 
 import (
-	"gin/internal/models"
-	"log"
+	userModels "gin/internal/models/user"
 )
 
 type UserRepo struct {
 	store *Repository
 }
 
-func (u UserRepo) CreateUser(user *models.User) (models.User, error) {
-	err := u.store.db.Create(user).Error
-	if err != nil {
-		return models.User{}, err
+func (u UserRepo) CreateUser(user *userModels.RegisterDto) (userModels.User, error) {
+	createdUser := userModels.User{
+		Name:     user.Name,
+		Email:    user.Email,
+		Password: user.Password,
 	}
-	log.Println(user)
-	return *user, nil
+
+	if err := u.store.db.Create(&createdUser).Error; err != nil {
+		return userModels.User{}, err
+	}
+
+	return createdUser, nil
 }
 
-func (u UserRepo) GetUserByID(id uint) (*models.User, error) {
-	var user models.User
-	err := u.store.db.First(&user, id).Error
+func (u UserRepo) GetUserByEmail(email string) (*userModels.User, error) {
+	var user userModels.User
+	err := u.store.db.Where("email=?", email).First(&user).Error
 	if err != nil {
-		return &models.User{}, err
+		return &userModels.User{}, err
 	}
-	log.Println(user)
 	return &user, nil
 }
 
-func (u UserRepo) UpdateUser(user *models.User) error {
+func (u UserRepo) GetUserByID(id uint) (*userModels.User, error) {
+	var user userModels.User
+	err := u.store.db.First(&user, id).Error
+	if err != nil {
+		return &userModels.User{}, err
+	}
+	return &user, nil
+}
+
+func (u UserRepo) UpdateUser(user *userModels.User) error {
 	// TODO implement me
 	panic("implement me")
 }
