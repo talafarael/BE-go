@@ -11,9 +11,9 @@ type Service interface {
 	UserService
 }
 type ServiceOptions struct {
-	Repo        repository.Store
-	JwtService  jwt.JwtService
-	HashService hash.HashService
+	Repo        *repository.Store
+	JwtService  *jwt.JwtService
+	HashService *hash.HashService
 }
 type service struct {
 	AuthService
@@ -23,12 +23,12 @@ type service struct {
 func NewService(options *ServiceOptions) Service {
 	return &service{
 		AuthService: NewAuthService(AuthServiceOptions{
-			Repo:        options.Repo,
-			JwtService:  options.JwtService,
-			HashService: options.HashService,
+			Repo:        *options.Repo,
+			JwtService:  *options.JwtService,
+			HashService: *options.HashService,
 		}),
 		UserService: NewUserService(UserServiceOptions{
-			Repo: options.Repo,
+			Repo: *options.Repo,
 		}),
 	}
 }

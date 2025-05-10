@@ -81,9 +81,9 @@ func ConfigService(repo repository.Store, config *config.Config) *services.Servi
 
 	service := services.NewService(
 		&services.ServiceOptions{
-			Repo:        repo,
-			JwtService:  jwtService,
-			HashService: hashService,
+			Repo:        &repo,
+			JwtService:  &jwtService,
+			HashService: &hashService,
 		})
 	return &service
 }
