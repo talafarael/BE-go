@@ -3,10 +3,13 @@ package services
 import (
 	userModels "gin/internal/models/user"
 	"gin/internal/repository"
+	response_error "gin/pkg/error"
+
+	"github.com/gin-gonic/gin"
 )
 
 type UserService interface {
-	Get(id string) (userModels.User, error)
+	Get(ctx *gin.Context) (userModels.User, error)
 }
 
 type userService struct {
@@ -22,15 +25,15 @@ func NewUserService(options UserServiceOptions) UserService {
 	}
 }
 
-func (u *userService) Get(token string) (userModels.User, error) {
-	//id, err := u.JwtService.VerifyToken(token)
-	//if err != nil {
-	//return userModels.User{}, err
-	//}
+func (u *userService) Get(ctx *gin.Context) (userModels.User, error) {
+	userValue, exists := ctx.Get("user")
+	if !exists {
+		return userModels.User{}, response_error.ErrUnauthorized
+	}
 
-	user, err := u.Repo.User().GetUserByID(1)
-	if err != nil {
-		return userModels.User{}, err
+	user, ok := userValue.(*userModels.User)
+	if !ok {
+		return userModels.User{}, response_error.ErrUnauthorized
 	}
 	return *user, nil
 }

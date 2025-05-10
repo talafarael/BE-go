@@ -36,7 +36,7 @@ func (a *authMiddleware) CheckUserMiddleware() gin.HandlerFunc {
 			response_error.HandlerError(c, err)
 			c.Abort()
 		}
-		id, err := a.JwtService.VerifyToken(strToken)
+		id, err := (*a.JwtService).VerifyToken(strToken)
 		if err != nil {
 			log.Printf("1")
 			response_error.HandlerError(c, err)

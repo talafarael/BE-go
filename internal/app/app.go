@@ -76,7 +76,7 @@ func (app *App) Start() error {
 }
 
 func ConfigService(repo repository.Store, config *config.Config) *services.Service {
-	hashService := hash.HashService{}
+	hashService := hash.NewHashService()
 	jwtService := jwt.NewJwtService(config.Secret)
 
 	service := services.NewService(

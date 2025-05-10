@@ -4,6 +4,13 @@ definitions:
       token:
         type: string
     type: object
+  models.LoginDto:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
   models.RegisterDto:
     properties:
       email:
@@ -24,6 +31,11 @@ definitions:
       password:
         type: string
     type: object
+  models.UserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
   response_error.ResponseError:
     properties:
       code:
@@ -34,6 +46,36 @@ definitions:
 info:
   contact: {}
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login account
+      parameters:
+      - description: User login data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthReponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response_error.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response_error.ResponseError'
+      summary: Login account
+      tags:
+      - auth
   /auth/register:
     post:
       consumes:
@@ -66,13 +108,17 @@ paths:
       - auth
   /user:
     get:
-      description: return list of all users from the database
+      description: return  user from the database by jwt token
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
-      summary: return list of all
+            $ref: '#/definitions/models.UserResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response_error.ResponseError'
+      summary: return user by token
       tags:
       - Users
 swagger: "2.0"

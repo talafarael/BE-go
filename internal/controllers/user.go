@@ -1,10 +1,12 @@
 package controllers
 
 import (
-	models "gin/internal/models/user"
+	userModels "gin/internal/models/user"
 	"gin/internal/services"
 	"gin/pkg/middleware"
 	"net/http"
+
+	response_error "gin/pkg/error"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,26 +23,21 @@ func NewUserController(service services.Service, authMiddleware *middleware.Auth
 	}
 }
 
-// GetUsers return list of all users from the database
-// @Summary return list of all
-// @Description return list of all users from the database
+// GetUsers return  user from the database
+// @Summary return user by token
+// @Description return  user from the database by jwt token
 // @Tags Users
-// @Success 200 {object} models.User
+// @Success 200 {object} userModels.UserResponse
+// @Failure      404  {object}  response_error.ResponseError
 // @Router /user [get]
 func (uc *UserController) GetUser(ctx *gin.Context) {
-	userValue, exists := ctx.Get("user")
-	if !exists {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+	user, err := uc.userService.Get(ctx)
+	if err != nil {
+		response_error.HandlerError(ctx, err)
 		return
 	}
 
-	user, ok := userValue.(*models.User)
-	if !ok {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to cast user"})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{"user": user})
+	ctx.JSON(http.StatusOK, userModels.UserResponse{User: user})
 }
 
 // RegisterRoutes sets up the routes for the UserController.

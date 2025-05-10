@@ -8,17 +8,21 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type JwtService struct {
+type jwtService struct {
 	secretKey string
+}
+type JwtService interface {
+	CreateToken(id uint) (string, error)
+	VerifyToken(tokenString string) (uint, error)
 }
 
 func NewJwtService(secretKey string) JwtService {
-	return JwtService{
+	return &jwtService{
 		secretKey: secretKey,
 	}
 }
 
-func (j *JwtService) CreateToken(id uint) (string, error) {
+func (j *jwtService) CreateToken(id uint) (string, error) {
 	claims := jwt.MapClaims{
 		"id":  id,
 		"exp": time.Now().Add(time.Hour * 1).Unix(),
@@ -32,7 +36,7 @@ func (j *JwtService) CreateToken(id uint) (string, error) {
 	return strToken, nil
 }
 
-func (j *JwtService) VerifyToken(tokenString string) (uint, error) {
+func (j *jwtService) VerifyToken(tokenString string) (uint, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("неожиданный метод подписи: %v", token.Header["alg"])
