@@ -2,7 +2,7 @@ package postgres
 
 import (
 	"database/sql"
-	userModels "gin/internal/models/user"
+	"gin/internal/dto"
 	response_error "gin/pkg/error"
 	"testing"
 
@@ -71,7 +71,7 @@ func TestCreateUser_Success(t *testing.T) {
 	defer sqlDB.Close()
 
 	repo := NewRepository(db)
-	userDto := &userModels.RegisterDto{
+	userDto := &dto.RegisterDto{
 		Name:     "John",
 		Email:    "john@example.com",
 		Password: "hashed-password",
@@ -95,7 +95,7 @@ func TestCreateUser_Failure(t *testing.T) {
 	defer sqlDB.Close()
 	repo := NewRepository(db)
 
-	userDto := &userModels.RegisterDto{
+	userDto := &dto.RegisterDto{
 		Name:     "Jane",
 		Email:    "jane@example.com",
 		Password: "hashed-password",

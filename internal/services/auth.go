@@ -1,15 +1,15 @@
 package services
 
 import (
-	userModels "gin/internal/models/user"
+	"gin/internal/dto"
 	"gin/internal/repository"
 	"gin/pkg/hash"
 	"gin/pkg/jwt"
 )
 
 type AuthService interface {
-	Register(user *userModels.RegisterDto) (string, error)
-	Login(userDto *userModels.LoginDto) (string, error)
+	Register(user *dto.RegisterDto) (string, error)
+	Login(userDto *dto.LoginDto) (string, error)
 }
 
 type authService struct {
@@ -28,7 +28,7 @@ func NewAuthService(options AuthServiceOptions) AuthService {
 	}
 }
 
-func (a *authService) Register(user *userModels.RegisterDto) (string, error) {
+func (a *authService) Register(user *dto.RegisterDto) (string, error) {
 	hashPassword, err := a.HashService.HashPassword(user.Password)
 	if err != nil {
 		return "", err
@@ -45,7 +45,7 @@ func (a *authService) Register(user *userModels.RegisterDto) (string, error) {
 	return token, nil
 }
 
-func (a *authService) Login(userDto *userModels.LoginDto) (string, error) {
+func (a *authService) Login(userDto *dto.LoginDto) (string, error) {
 	user, err := a.Repo.User().GetUserByEmail(userDto.Email)
 	if err != nil {
 		return "", err

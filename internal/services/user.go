@@ -1,7 +1,7 @@
 package services
 
 import (
-	userModels "gin/internal/models/user"
+	"gin/internal/models"
 	"gin/internal/repository"
 	response_error "gin/pkg/error"
 
@@ -9,7 +9,7 @@ import (
 )
 
 type UserService interface {
-	Get(ctx *gin.Context) (userModels.User, error)
+	Get(ctx *gin.Context) (models.User, error)
 }
 
 type userService struct {
@@ -25,15 +25,15 @@ func NewUserService(options UserServiceOptions) UserService {
 	}
 }
 
-func (u *userService) Get(ctx *gin.Context) (userModels.User, error) {
+func (u *userService) Get(ctx *gin.Context) (models.User, error) {
 	userValue, exists := ctx.Get("user")
 	if !exists {
-		return userModels.User{}, response_error.ErrUnauthorized
+		return models.User{}, response_error.ErrUnauthorized
 	}
 
-	user, ok := userValue.(*userModels.User)
+	user, ok := userValue.(*models.User)
 	if !ok {
-		return userModels.User{}, response_error.ErrUnauthorized
+		return models.User{}, response_error.ErrUnauthorized
 	}
 	return *user, nil
 }
