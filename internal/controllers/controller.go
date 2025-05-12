@@ -1,8 +1,8 @@
 package controllers
 
 import (
+	"gin/internal/middleware"
 	"gin/internal/services"
-	"gin/pkg/middleware"
 
 	"github.com/gin-gonic/gin"
 )

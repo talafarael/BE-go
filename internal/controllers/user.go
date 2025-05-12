@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"gin/internal/middleware"
 	"gin/internal/models"
 	"gin/internal/services"
-	"gin/pkg/middleware"
 	"net/http"
 
 	response_error "gin/pkg/error"

@@ -7,14 +7,11 @@ import (
 	"gin/internal/config"
 	"gin/internal/controllers"
 	"gin/internal/database/migrattion"
-	"gin/internal/repository"
+	"gin/internal/middleware"
 	"gin/internal/repository/postgres"
 	"gin/internal/services"
-	check_auth_header "gin/pkg/checkAuthHeader"
 	"gin/pkg/database"
 	"gin/pkg/handler"
-	"gin/pkg/jwt"
-	"gin/pkg/middleware"
 	"gin/pkg/server"
 	"net/http"
 	"os"
@@ -71,19 +68,6 @@ func (app *App) Start() error {
 	return nil
 }
 
-func ConfigMiddleware(repo repository.Store, config *config.Config) *middleware.AuthMiddleware {
-	jwtService := jwt.NewJwtService(config.Secret)
-	checkAuthHeader := check_auth_header.CheckAuthHeader{}
-
-	authMiddleware := middleware.NewAuthMiddleware(
-		&middleware.AuthMiddlewareOptions{
-			CheckAuthHeader: &checkAuthHeader,
-			JwtService:      &jwtService,
-			Repo:            &repo,
-		})
-	return &authMiddleware
-}
-
 func (app *App) configureRouter() {
 	router := app.handler.Routing()
 	router.Use(
@@ -93,7 +77,7 @@ func (app *App) configureRouter() {
 	repo := postgres.NewRepository(app.store.GetDB())
 	// Regiuster service
 	services := services.ConfigService(repo, app.config)
-	middleware := ConfigMiddleware(repo, app.config)
+	middleware := middleware.ConfigMiddleware(repo, app.config)
 
 	controller := controllers.NewBaseController(services, middleware)
 	controller.RegisterRoutes(router)
