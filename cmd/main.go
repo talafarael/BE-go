@@ -2,7 +2,7 @@ package main
 
 import (
 	"gin/internal/app"
-	load_config "gin/pkg/loadConfig"
+	"gin/pkg/load_config"
 	"log"
 )
 

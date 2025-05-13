@@ -3,7 +3,7 @@ package load_config
 import (
 	"gin/internal/config"
 	"gin/pkg/database"
-	get_env "gin/pkg/getEnv"
+	"gin/pkg/get_env"
 )
 
 func LoadConfig() config.Config {
