@@ -9,6 +9,5 @@ type UserRepository interface {
 	CreateUser(user *dto.RegisterDto) (models.User, error)
 	GetUserByID(id uint) (*models.User, error)
 	GetUserByEmail(email string) (*models.User, error)
-	UpdateUser(user *models.User) error
 	DeleteUser(id int) error
 }

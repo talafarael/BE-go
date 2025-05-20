@@ -9,7 +9,7 @@ import (
 )
 
 type UserService interface {
-	Get(ctx *gin.Context) (models.User, error)
+	Get(ctx *gin.Context) (*models.User, error)
 }
 
 type userService struct {
@@ -25,15 +25,15 @@ func NewUserService(options UserServiceOptions) UserService {
 	}
 }
 
-func (u *userService) Get(ctx *gin.Context) (models.User, error) {
+func (u *userService) Get(ctx *gin.Context) (*models.User, error) {
 	userValue, exists := ctx.Get("user")
 	if !exists {
-		return models.User{}, response_error.ErrUnauthorized
+		return &models.User{}, response_error.ErrUnauthorized
 	}
 
 	user, ok := userValue.(*models.User)
 	if !ok {
-		return models.User{}, response_error.ErrUnauthorized
+		return &models.User{}, response_error.ErrUnauthorized
 	}
-	return *user, nil
+	return user, nil
 }

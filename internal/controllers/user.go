@@ -37,7 +37,7 @@ func (uc *UserController) GetUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, models.UserResponse{User: user})
+	ctx.JSON(http.StatusOK, models.UserResponse{User: *user})
 }
 
 // RegisterRoutes sets up the routes for the UserController.
