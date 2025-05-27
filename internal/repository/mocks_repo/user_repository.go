@@ -23,15 +23,18 @@ func NewMockUserRepository(store *Mocks) *mockUserRepository {
 }
 
 func (m *mockUserRepository) CreateUser(user *dto.RegisterDto) (models.User, error) {
+	if user.Email == "test@example.com" {
+		return models.User{}, response_error.ErrUserAlredy
+	}
 	newUser := models.User{
 		ID:    uint(len(m.store.users) + 1),
 		Email: user.Email,
 	}
 	m.store.users[newUser.ID] = &models.User{
 		ID:       1,
-		Name:     "testuser",
-		Email:    "test@example.com",
-		Password: "password",
+		Name:     user.Name,
+		Email:    user.Email,
+		Password: user.Password,
 	}
 	return newUser, nil
 }
@@ -51,7 +54,7 @@ func (m *mockUserRepository) GetUserByEmail(email string) (*models.User, error) 
 			return user, nil
 		}
 	}
-	return nil, fmt.Errorf("user not found")
+	return nil, response_error.ErrUserNotFound
 }
 
 func (m *mockUserRepository) DeleteUser(id int) error {

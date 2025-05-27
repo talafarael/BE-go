@@ -43,6 +43,7 @@ func TestUser(t *testing.T) {
 			WantErr: true,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			mockRepo := mocks_repository.NewRepository()

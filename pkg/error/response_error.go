@@ -30,7 +30,7 @@ var (
 	ErrJWTCreationFailed = NewResponseError(500, "JWT error: failed to create token")
 	// user
 	ErrUserAlredy                = NewResponseError(401, "Email alredy exists")
-	ErrUserNotFound              = NewResponseError(401, "User notr found")
+	ErrUserNotFound              = NewResponseError(401, "User not found")
 	ErrPasswordOrEmailNotCorrect = NewResponseError(401, "Invalid email or password")
 	// authoriztion err
 	ErrUnauthorized = NewResponseError(401, "Unauthorized")
