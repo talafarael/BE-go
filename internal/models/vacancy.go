@@ -11,4 +11,5 @@ type Vacancy struct {
 	UrlComapny string
 	UrlChat    string
 	DateMeet   time.Time
+	UserId     uint
 }

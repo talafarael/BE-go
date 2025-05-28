@@ -32,6 +32,8 @@ var (
 	ErrUserAlredy                = NewResponseError(401, "Email alredy exists")
 	ErrUserNotFound              = NewResponseError(401, "User not found")
 	ErrPasswordOrEmailNotCorrect = NewResponseError(401, "Invalid email or password")
+	// vacancy
+	ErrVacancyCreateError = NewResponseError(500, "Something went wrong")
 	// authoriztion err
 	ErrUnauthorized = NewResponseError(401, "Unauthorized")
 	ErrForbidden    = NewResponseError(403, "Forbidden")

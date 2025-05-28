@@ -12,11 +12,8 @@ import (
 type mockUserRepository struct {
 	store *Mocks
 }
-type MockUserRepository interface {
-	repository.UserRepository
-}
 
-func NewMockUserRepository(store *Mocks) *mockUserRepository {
+func NewMockUserRepository(store *Mocks) repository.UserRepository {
 	return &mockUserRepository{
 		store: store,
 	}

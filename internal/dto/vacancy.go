@@ -2,7 +2,7 @@ package dto
 
 import "time"
 
-type CreateVacancy struct {
+type CreateVacancyDto struct {
 	Vacancy    string
 	Status     bool
 	Company    string

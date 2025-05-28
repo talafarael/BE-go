@@ -1,7 +1,10 @@
 package repository
 
-import "gin/internal/dto"
+import (
+	"gin/internal/dto"
+	"gin/internal/models"
+)
 
 type VacancyRepository interface {
-	CreateVacancy(vacancy *dto.LoginDto)
+	CreateVacancy(user *models.User, vacancy *dto.CreateVacancyDto) (models.Vacancy, error)
 }

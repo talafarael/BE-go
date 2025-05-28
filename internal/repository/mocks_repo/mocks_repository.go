@@ -7,7 +7,7 @@ import (
 
 type Mocks struct {
 	users              map[uint]*models.User
-	mockUserRepository MockUserRepository
+	mockUserRepository repository.UserRepository
 }
 
 func NewRepository() *Mocks {
