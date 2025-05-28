@@ -15,7 +15,7 @@ type BaseController struct {
 	*AuthController
 	*UserController
 	*SwaggerController
-
+	*VacancyController
 	AuthMiddleware *middleware.AuthMiddleware
 }
 
@@ -24,6 +24,7 @@ func NewBaseController(service *services.Service, authMiddleware *middleware.Aut
 		service:           service,
 		AuthController:    NewAuthController(*service),
 		UserController:    NewUserController(*service, authMiddleware),
+		VacancyController: NewVacancyController(*service, authMiddleware),
 		SwaggerController: NewSwaggerController(),
 		AuthMiddleware:    authMiddleware,
 	}
@@ -32,5 +33,6 @@ func NewBaseController(service *services.Service, authMiddleware *middleware.Aut
 func (bc *BaseController) RegisterRoutes(router *gin.Engine) {
 	bc.AuthController.AuthRoutes(router)
 	bc.UserController.UserRoutes(router)
+	bc.VacancyController.VacancyRoutes(router)
 	bc.SwaggerController.SwaggerRoutes(router)
 }

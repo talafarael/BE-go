@@ -26,7 +26,7 @@ func (u UserRepo) CreateUser(user *dto.RegisterDto) (models.User, error) {
 
 func (u UserRepo) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
-	err := u.store.db.Where("email=?", email).First(&user).Error
+	err := u.store.db.Preload("Vacancies").Where("email=?", email).First(&user).Error
 	if err != nil {
 		return &models.User{}, response_error.ErrUserNotFound
 	}
@@ -35,7 +35,7 @@ func (u UserRepo) GetUserByEmail(email string) (*models.User, error) {
 
 func (u UserRepo) GetUserByID(id uint) (*models.User, error) {
 	var user models.User
-	err := u.store.db.First(&user, id).Error
+	err := u.store.db.Preload("Vacancies").First(&user, id).Error
 	if err != nil {
 		return &models.User{}, response_error.ErrUserNotFound
 	}

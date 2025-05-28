@@ -9,6 +9,7 @@ import (
 type Service interface {
 	AuthService
 	UserService
+	VacancyService
 }
 type ServiceOptions struct {
 	Repo        *repository.Store
@@ -18,6 +19,7 @@ type ServiceOptions struct {
 type service struct {
 	AuthService
 	UserService
+	VacancyService
 }
 
 func NewService(options *ServiceOptions) Service {
@@ -28,6 +30,9 @@ func NewService(options *ServiceOptions) Service {
 			HashService: *options.HashService,
 		}),
 		UserService: NewUserService(UserServiceOptions{
+			Repo: *options.Repo,
+		}),
+		VacancyService: NewVacancyService(VacancyServiceOptions{
 			Repo: *options.Repo,
 		}),
 	}

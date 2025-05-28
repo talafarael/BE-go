@@ -1,7 +1,6 @@
 package jwt
 
 import (
-	"fmt"
 	response_error "gin/pkg/error"
 	"time"
 
@@ -39,7 +38,7 @@ func (j *jwtService) CreateToken(id uint) (string, error) {
 func (j *jwtService) VerifyToken(tokenString string) (uint, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("неожиданный метод подписи: %v", token.Header["alg"])
+			return nil, response_error.ErrInvalidCredentials
 		}
 		return []byte(j.secretKey), nil
 	})

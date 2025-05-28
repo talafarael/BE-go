@@ -1,9 +1,12 @@
-package hash
+package hash_test
 
-import "testing"
+import (
+	"gin/pkg/hash"
+	"testing"
+)
 
 func TestHashService(t *testing.T) {
-	service := NewHashService()
+	service := hash.NewHashService()
 
 	t.Run("Hash and Check password", func(t *testing.T) {
 		password := "pass"

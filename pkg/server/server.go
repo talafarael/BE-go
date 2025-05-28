@@ -3,15 +3,15 @@ package server
 import (
 	"context"
 	"gin/internal/config"
-	"gin/pkg/HttpServer"
 	"gin/pkg/handler"
+	"gin/pkg/http_server"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
-	httpServer HttpServer.Server
+	httpServer http_server.Server
 	httpNet    http.Server
 }
 

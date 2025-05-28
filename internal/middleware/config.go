@@ -3,7 +3,7 @@ package middleware
 import (
 	"gin/internal/config"
 	"gin/internal/repository"
-	check_auth_header "gin/pkg/checkAuthHeader"
+	"gin/pkg/check_auth_header"
 	"gin/pkg/jwt"
 )
 
