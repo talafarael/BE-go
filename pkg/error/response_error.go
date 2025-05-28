@@ -34,6 +34,9 @@ var (
 	ErrPasswordOrEmailNotCorrect = NewResponseError(401, "Invalid email or password")
 	// vacancy
 	ErrVacancyCreateError = NewResponseError(500, "Something went wrong")
+	ErrIDEmpty            = NewResponseError(400, "ID must not be empty")
+	ErrIDFormtaion        = NewResponseError(400, "Invalid ID format")
+	ErrVacancyNotFound    = NewResponseError(401, "Vacancy not found")
 	// authoriztion err
 	ErrUnauthorized = NewResponseError(401, "Unauthorized")
 	ErrForbidden    = NewResponseError(403, "Forbidden")

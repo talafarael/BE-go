@@ -5,7 +5,7 @@ type User struct {
 	Name      string
 	Email     string `gorm:"unique"`
 	Password  string
-	VacancyId []Vacancy `gorm:"foreignKey:UserId"`
+	Vacancies []Vacancy `gorm:"foreignKey:UserID"`
 }
 
 type UserResponse struct {

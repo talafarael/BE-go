@@ -6,5 +6,7 @@ import (
 )
 
 type VacancyRepository interface {
-	CreateVacancy(user *models.User, vacancy *dto.CreateVacancyDto) (models.Vacancy, error)
+	CreateVacancy(user *models.User, vacancyDto *dto.CreateVacancyDto) (models.Vacancy, error)
+	UpdateVacancy(user *models.User, vacancyDto *dto.UpdateVacancyDto, id uint) (models.Vacancy, error)
+	DeleteVacancy(user *models.User, id uint) (bool, error)
 }

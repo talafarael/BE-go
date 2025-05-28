@@ -6,8 +6,10 @@ import (
 )
 
 type Mocks struct {
-	users              map[uint]*models.User
-	mockUserRepository repository.UserRepository
+	users                 map[uint]*models.User
+	mockUserRepository    repository.UserRepository
+	vacancy               map[uint]*models.Vacancy
+	mockVacancyRepository repository.VacancyRepository
 }
 
 func NewRepository() *Mocks {
@@ -32,6 +34,16 @@ func (m *Mocks) AddUser(user *models.User) {
 		Email:    "test@example.com",
 		Password: "password",
 	}
+}
+
+func (m *Mocks) Vacancy() repository.VacancyRepository {
+	if m.mockVacancyRepository != nil {
+		return m.mockVacancyRepository
+	}
+
+	m.mockVacancyRepository = NewMockVacancyRepository(m)
+
+	return m.mockVacancyRepository
 }
 
 func (m *Mocks) User() repository.UserRepository {

@@ -8,8 +8,8 @@ type Vacancy struct {
 	Time       time.Time
 	Status     bool
 	Company    string
-	UrlComapny string
+	UrlCompany string
 	UrlChat    string
 	DateMeet   time.Time
-	UserId     uint
+	UserID     uint
 }
