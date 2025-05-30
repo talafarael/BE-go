@@ -24,7 +24,6 @@ services:
       - "${DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    command: ["postgres", "-c", "ssl=off"]
     networks:
       - go-be
 
