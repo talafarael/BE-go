@@ -1,20 +1,34 @@
-version: '3.8'
+version: "3.8"
 
 services:
+  webapp:
+    build: ./
+    ports:
+      - "8080:8080"
+    networks:
+      - go-be
+    depends_on:
+      - postgres
+
   postgres:
     image: postgres:15
     container_name: my_postgres
     restart: unless-stopped
+    env_file: "example.env"
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydb
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
       TZ: UTC
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     command: ["postgres", "-c", "ssl=off"]
+    networks:
+      - go-be
 
+networks:
+  go-be:
 volumes:
   postgres_data:
