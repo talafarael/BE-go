@@ -1,4 +1,4 @@
-package services
+package user_services
 
 import (
 	userModels "gin/internal/models/user"

@@ -1,0 +1,57 @@
+[33mcommit bcfc32cdb477037f45789043478274e0d08b7b00[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/change-architecture[m[33m, [m[1;31morigin/feature/change-architecture[m[33m, [m[1;32mmain[m[33m)[m
+Author: talafarael <artemk2504@gmail.com>
+Date:   Sat May 10 22:20:48 2025 +0000
+
+    feat:fast
+
+[1mdiff --git a/internal/app/app.go b/internal/app/app.go[m
+[1mindex 0ac8497..6e4d375 100644[m
+[1m--- a/internal/app/app.go[m
+[1m+++ b/internal/app/app.go[m
+[36m@@ -81,9 +81,9 @@[m [mfunc ConfigService(repo repository.Store, config *config.Config) *services.Servi[m
+ [m
+ 	service := services.NewService([m
+ 		&services.ServiceOptions{[m
+[31m-			Repo:        repo,[m
+[31m-			JwtService:  jwtService,[m
+[31m-			HashService: hashService,[m
+[32m+[m			[32mRepo:        &repo,[m
+[32m+[m			[32mJwtService:  &jwtService,[m
+[32m+[m			[32mHashService: &hashService,[m
+ 		})[m
+ 	return &service[m
+ }[m
+[1mdiff --git a/internal/services/service.go b/internal/services/service.go[m
+[1mindex 5c04959..bf4d591 100644[m
+[1m--- a/internal/services/service.go[m
+[1m+++ b/internal/services/service.go[m
+[36m@@ -11,9 +11,9 @@[m [mtype Service interface {[m
+ 	UserService[m
+ }[m
+ type ServiceOptions struct {[m
+[31m-	Repo        repository.Store[m
+[31m-	JwtService  jwt.JwtService[m
+[31m-	HashService hash.HashService[m
+[32m+[m	[32mRepo        *repository.Store[m
+[32m+[m	[32mJwtService  *jwt.JwtService[m
+[32m+[m	[32mHashService *hash.HashService[m
+ }[m
+ type service struct {[m
+ 	AuthService[m
+[36m@@ -23,12 +23,12 @@[m [mtype service struct {[m
+ func NewService(options *ServiceOptions) Service {[m
+ 	return &service{[m
+ 		AuthService: NewAuthService(AuthServiceOptions{[m
+[31m-			Repo:        options.Repo,[m
+[31m-			JwtService:  options.JwtService,[m
+[31m-			HashService: options.HashService,[m
+[32m+[m			[32mRepo:        *options.Repo,[m
+[32m+[m			[32mJwtService:  *options.JwtService,[m
+[32m+[m			[32mHashService: *options.HashService,[m
+ 		}),[m
+ 		UserService: NewUserService(UserServiceOptions{[m
+[31m-			Repo: options.Repo,[m
+[32m+[m			[32mRepo: *options.Repo,[m
+ 		}),[m
+ 	}[m
+ }[m

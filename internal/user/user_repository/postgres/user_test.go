@@ -1,4 +1,4 @@
-package postgres
+package user_postgres_test
 
 import (
 	"database/sql"

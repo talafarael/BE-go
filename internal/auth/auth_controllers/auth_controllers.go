@@ -1,7 +1,8 @@
-package controllers
+package auth_controller
 
 import (
-	userModels "gin/internal/models/user"
+	"gin/internal/auth/auth_dto"
+	"gin/internal/models"
 	"gin/internal/services"
 	response_error "gin/pkg/error"
 	"net/http"
@@ -31,7 +32,7 @@ func NewAuthController(service services.Service) *AuthController {
 // @Failure      500  {object}  response_error.ResponseError
 // @Router       /auth/register [post]
 func (uc *AuthController) Register(ctx *gin.Context) {
-	var user userModels.RegisterDto
+	var user auth_dto.RegisterDto
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		response_error.HandlerError(ctx, err)
 		return
@@ -41,7 +42,7 @@ func (uc *AuthController) Register(ctx *gin.Context) {
 		response_error.HandlerError(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusCreated, userModels.AuthReponse{
+	ctx.JSON(http.StatusCreated, models.AuthReponse{
 		Token: token,
 	})
 }
@@ -58,7 +59,7 @@ func (uc *AuthController) Register(ctx *gin.Context) {
 // @Failure      500  {object}  response_error.ResponseError
 // @Router       /auth/login [post]
 func (uc *AuthController) Login(ctx *gin.Context) {
-	var user userModels.LoginDto
+	var user auth_dto.LoginDto
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		response_error.HandlerError(ctx, err)
 		return
@@ -68,7 +69,7 @@ func (uc *AuthController) Login(ctx *gin.Context) {
 		response_error.HandlerError(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusCreated, userModels.AuthReponse{
+	ctx.JSON(http.StatusCreated, models.AuthReponse{
 		Token: token,
 	})
 }
