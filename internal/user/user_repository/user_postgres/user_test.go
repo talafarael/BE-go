@@ -2,7 +2,6 @@ package user_postgres_test
 
 import (
 	"database/sql"
-	userModels "gin/internal/models/user"
 	response_error "gin/pkg/error"
 	"testing"
 
@@ -34,7 +33,7 @@ func DbMock(t *testing.T) (*sql.DB, *gorm.DB, sqlmock.Sqlmock) {
 func TestGetUserByEamil(t *testing.T) {
 	sqlDB, db, mock := DbMock(t)
 	defer sqlDB.Close()
-	repo := NewRepository(db)
+	repo := NewUserRepo(db)
 	rows := sqlmock.NewRows([]string{"id", "name", "email", "password"}).
 		AddRow(1, "John Doe", "john@example.com", "pass")
 	mock.ExpectQuery(`SELECT \* FROM "users" WHERE email=\$1 ORDER BY "users"\."id" LIMIT \$2`).

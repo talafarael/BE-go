@@ -1,20 +1,15 @@
 package auth_services
 
 import (
-<<<<<<< HEAD:internal/services/auth.go
-	userModels "gin/internal/models/user"
-=======
 	"gin/internal/auth/auth_dto"
-	"gin/internal/dto"
->>>>>>> 5f8489a (feat:first-step):internal/auth/auth_services/auth_service.go
-	"gin/internal/repository"
+	"gin/internal/infrastructure/repository"
 	"gin/pkg/hash"
 	"gin/pkg/jwt"
 )
 
 type AuthService interface {
-	Register(user *userModels.RegisterDto) (string, error)
-	Login(userDto *userModels.LoginDto) (string, error)
+	Register(user *auth_dto.RegisterDto) (string, error)
+	Login(userDto *auth_dto.LoginDto) (string, error)
 }
 
 type authService struct {
@@ -33,11 +28,7 @@ func NewAuthService(options AuthServiceOptions) AuthService {
 	}
 }
 
-<<<<<<< HEAD:internal/services/auth.go
-func (a *authService) Register(user *userModels.RegisterDto) (string, error) {
-=======
 func (a *authService) Register(user *auth_dto.RegisterDto) (string, error) {
->>>>>>> 5f8489a (feat:first-step):internal/auth/auth_services/auth_service.go
 	hashPassword, err := a.HashService.HashPassword(user.Password)
 	if err != nil {
 		return "", err
@@ -54,11 +45,7 @@ func (a *authService) Register(user *auth_dto.RegisterDto) (string, error) {
 	return token, nil
 }
 
-<<<<<<< HEAD:internal/services/auth.go
-func (a *authService) Login(userDto *userModels.LoginDto) (string, error) {
-=======
 func (a *authService) Login(userDto *auth_dto.LoginDto) (string, error) {
->>>>>>> 5f8489a (feat:first-step):internal/auth/auth_services/auth_service.go
 	user, err := a.Repo.User().GetUserByEmail(userDto.Email)
 	if err != nil {
 		return "", err

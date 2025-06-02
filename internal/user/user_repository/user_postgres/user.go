@@ -2,13 +2,21 @@ package user_postgres
 
 import (
 	"gin/internal/auth/auth_dto"
-	"gin/internal/infrastructure/repository/postgres"
 	"gin/internal/user/user_models"
+	"gin/internal/user/user_repository"
 	response_error "gin/pkg/error"
+
+	"gorm.io/gorm"
 )
 
 type UserRepo struct {
-	store *postgres.Repository
+	db *gorm.DB
+}
+
+func NewUserRepo(db *gorm.DB) user_repository.UserRepository {
+	return &UserRepo{
+		db: db,
+	}
 }
 
 func (u UserRepo) CreateUser(user *auth_dto.RegisterDto) (user_models.User, error) {
@@ -18,7 +26,7 @@ func (u UserRepo) CreateUser(user *auth_dto.RegisterDto) (user_models.User, erro
 		Password: user.Password,
 	}
 
-	if err := u.store.db.Create(&createdUser).Error; err != nil {
+	if err := u.db.Create(&createdUser).Error; err != nil {
 		return user_models.User{}, response_error.ErrUserAlredy
 	}
 
@@ -27,7 +35,7 @@ func (u UserRepo) CreateUser(user *auth_dto.RegisterDto) (user_models.User, erro
 
 func (u UserRepo) GetUserByEmail(email string) (*user_models.User, error) {
 	var user user_models.User
-	err := u.store.db.Preload("Vacancies").Where("email=?", email).First(&user).Error
+	err := u.db.Preload("Vacancies").Where("email=?", email).First(&user).Error
 	if err != nil {
 		return &user_models.User{}, response_error.ErrUserNotFound
 	}
@@ -36,7 +44,7 @@ func (u UserRepo) GetUserByEmail(email string) (*user_models.User, error) {
 
 func (u UserRepo) GetUserByID(id uint) (*user_models.User, error) {
 	var user user_models.User
-	err := u.store.db.Preload("Vacancies").First(&user, id).Error
+	err := u.db.Preload("Vacancies").First(&user, id).Error
 	if err != nil {
 		return &user_models.User{}, response_error.ErrUserNotFound
 	}

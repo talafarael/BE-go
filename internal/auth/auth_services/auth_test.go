@@ -57,7 +57,7 @@ func TestAuth(t *testing.T) {
 				})
 				login, err := authService.Login(ttl.Data)
 				if (err != nil) != ttl.WantErr {
-					t.Errorf("AuthService.Login() error = %v, wantErr %v", err, ttl.WantErr)
+					t.Error
 				}
 				if ttl.Res == "" && login != "" {
 					t.Errorf("AuthService.Login() = %v, want nil", login)

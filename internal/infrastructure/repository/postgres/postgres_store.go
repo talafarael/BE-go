@@ -10,7 +10,7 @@ import (
 
 type Repository struct {
 	db                *gorm.DB
-	userRepository    *user_postgres.UserRepo
+	userRepository    user_repository.UserRepository
 	vacancyRepository *vacancy_repository.VacancyRepository
 }
 
@@ -35,9 +35,6 @@ func (r *Repository) User() user_repository.UserRepository {
 		return r.userRepository
 	}
 
-	r.userRepository = &user_repository.UserRepository{
-		store: r,
-	}
-
+	r.userRepository = user_postgres.NewUserRepo(r.db)
 	return r.userRepository
 }
