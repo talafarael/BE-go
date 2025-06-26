@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"gin/internal/config"
+	"gin/internal/infrastructure/config"
 	"gin/pkg/HttpServer"
 	"gin/pkg/handler"
 	"net/http"

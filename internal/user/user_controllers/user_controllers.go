@@ -1,8 +1,8 @@
-package controllers
+package user_controller
 
 import (
-	userModels "gin/internal/models/user"
-	"gin/internal/services"
+	"gin/internal/app/services"
+	user_dto "gin/internal/user/user_dto"
 	"gin/pkg/middleware"
 	"net/http"
 
@@ -37,7 +37,7 @@ func (uc *UserController) GetUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, userModels.UserResponse{User: user})
+	ctx.JSON(http.StatusOK, user_dto.UserResponse{User: *user})
 }
 
 // RegisterRoutes sets up the routes for the UserController.

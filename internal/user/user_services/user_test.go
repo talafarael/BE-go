@@ -1,8 +1,8 @@
 package user_services_test
 
 import (
-	"gin/internal/models"
-	mocks_repository "gin/internal/repository/mocks_repo"
+	"gin/internal/infrastructure/repository/mocks_repository"
+	"gin/internal/user/user_models"
 	"gin/internal/user/user_services"
 	"testing"
 
@@ -14,7 +14,7 @@ import (
 
 func TestUser(t *testing.T) {
 	ctx := &gin.Context{}
-	user := &models.User{
+	user := &user_models.User{
 		ID:       1,
 		Name:     "testuser",
 		Email:    "test@example.com",
@@ -22,11 +22,11 @@ func TestUser(t *testing.T) {
 	}
 	ctx.Set("user", user)
 
-	tests := []test_case.TestCase[*gin.Context, *models.User]{
+	tests := []test_case.TestCase[*gin.Context, *user_models.User]{
 		{
 			Name: "Existing user",
 			Data: ctx,
-			Res: &models.User{
+			Res: &user_models.User{
 				ID:       1,
 				Name:     "testuser",
 				Email:    "test@example.com",
@@ -38,7 +38,7 @@ func TestUser(t *testing.T) {
 		{
 			Name:    "Empty user",
 			Data:    &gin.Context{},
-			Res:     &models.User{},
+			Res:     &user_models.User{},
 			Err:     response_error.ErrUnauthorized,
 			WantErr: true,
 		},

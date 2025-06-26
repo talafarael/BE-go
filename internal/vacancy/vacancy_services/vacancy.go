@@ -1,7 +1,7 @@
 package vacancy_services
 
 import (
-	"gin/internal/repository"
+	"gin/internal/infrastructure/repository"
 	"gin/internal/user/user_models"
 	"gin/internal/vacancy/vacancy_dto"
 	response_error "gin/pkg/error"

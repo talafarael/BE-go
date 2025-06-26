@@ -1,9 +1,8 @@
 package auth_controller
 
 import (
+	"gin/internal/app/services"
 	"gin/internal/auth/auth_dto"
-	"gin/internal/models"
-	"gin/internal/services"
 	response_error "gin/pkg/error"
 	"net/http"
 
@@ -42,7 +41,7 @@ func (uc *AuthController) Register(ctx *gin.Context) {
 		response_error.HandlerError(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusCreated, models.AuthReponse{
+	ctx.JSON(http.StatusCreated, auth_dto.AuthReponse{
 		Token: token,
 	})
 }
@@ -69,7 +68,7 @@ func (uc *AuthController) Login(ctx *gin.Context) {
 		response_error.HandlerError(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusCreated, models.AuthReponse{
+	ctx.JSON(http.StatusCreated, auth_dto.AuthReponse{
 		Token: token,
 	})
 }

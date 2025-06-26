@@ -1,4 +1,4 @@
-package models
+package user_dto
 
 import "gin/internal/user/user_models"
 

@@ -35,4 +35,7 @@ var (
 	// authoriztion err
 	ErrUnauthorized = NewResponseError(401, "Unauthorized")
 	ErrForbidden    = NewResponseError(403, "Forbidden")
+	// vacancy
+	ErrVacancyCreateError = NewResponseError(400, "Error creating vacancy")
+	ErrVacancyNotFound    = NewResponseError(404, "Vacancy not found")
 )

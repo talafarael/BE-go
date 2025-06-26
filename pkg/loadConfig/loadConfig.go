@@ -1,7 +1,7 @@
 package load_config
 
 import (
-	"gin/internal/config"
+	"gin/internal/infrastructure/config"
 	"gin/pkg/database"
 	get_env "gin/pkg/getEnv"
 )

@@ -1,8 +1,9 @@
 package mocks_repository
 
 import (
-	"gin/internal/repository"
 	"gin/internal/user/user_models"
+	"gin/internal/user/user_repository"
+	"gin/internal/user/user_repository/user_mock_repository"
 	"gin/internal/vacancy/vacancy_models"
 	"gin/internal/vacancy/vacancy_repository"
 	"gin/internal/vacancy/vacancy_repository/vacancy_mocks_repository"
@@ -10,7 +11,7 @@ import (
 
 type Mocks struct {
 	users                 map[uint]*user_models.User
-	mockUserRepository    repository.UserRepository
+	mockUserRepository    user_repository.UserRepository
 	vacancy               map[uint]*vacancy_models.Vacancy
 	mockVacancyRepository vacancy_repository.VacancyRepository
 }
@@ -44,17 +45,17 @@ func (m *Mocks) Vacancy() vacancy_repository.VacancyRepository {
 		return m.mockVacancyRepository
 	}
 
-	m.mockVacancyRepository = vacancy_mocks_repository.MockNewMockVacancyRepository(m)
+	m.mockVacancyRepository = vacancy_mocks_repository.NewMockVacancyRepository(m.vacancy)
 
 	return m.mockVacancyRepository
 }
 
-func (m *Mocks) User() repository.UserRepository {
+func (m *Mocks) User() user_repository.UserRepository {
 	if m.mockUserRepository != nil {
 		return m.mockUserRepository
 	}
 
-	m.mockUserRepository = NewMockUserRepository(m)
+	m.mockUserRepository = user_mock_repository.NewMockUserRepository(m.users)
 
 	return m.mockUserRepository
 }

@@ -1,21 +1,21 @@
 package auth_services_test
 
 import (
-	"gin/internal/dto"
-	mocks_repository "gin/internal/repository/mocks_repo"
-	"gin/internal/services"
+	"gin/internal/auth/auth_dto"
+	"gin/internal/auth/auth_services"
+	"gin/internal/infrastructure/repository/mocks_repository"
 	response_error "gin/pkg/error"
-	mock_hash "gin/pkg/hash/mock"
-	mock_jwt "gin/pkg/jwt/mock"
+	"gin/pkg/hash/mock_hash"
+	"gin/pkg/jwt/mock_jwt"
 	test_case "gin/pkg/test"
 	"testing"
 )
 
 func TestAuth(t *testing.T) {
-	testsLogin := []test_case.TestCase[*dto.LoginDto, string]{
+	testsLogin := []test_case.TestCase[*auth_dto.LoginDto, string]{
 		{
 			Name: "Existing jwt token",
-			Data: &dto.LoginDto{
+			Data: &auth_dto.LoginDto{
 				Email:    "test@example.com",
 				Password: "password",
 			},
@@ -25,7 +25,7 @@ func TestAuth(t *testing.T) {
 		},
 		{
 			Name: "Error password not correct",
-			Data: &dto.LoginDto{
+			Data: &auth_dto.LoginDto{
 				Email:    "test@example.com",
 				Password: "not_correct_password",
 			},
@@ -35,7 +35,7 @@ func TestAuth(t *testing.T) {
 		},
 		{
 			Name: "Error password not correct",
-			Data: &dto.LoginDto{
+			Data: &auth_dto.LoginDto{
 				Email:    "test1@example.com",
 				Password: "password",
 			},
@@ -50,15 +50,12 @@ func TestAuth(t *testing.T) {
 				mockJwtService := mock_jwt.NewMockJwtService("secret")
 				mockHashService := mock_hash.NewHashService()
 				mockRepo := mocks_repository.NewRepository()
-				authService := services.NewAuthService(services.AuthServiceOptions{
+				authService := auth_services.NewAuthService(auth_services.AuthServiceOptions{
 					Repo:        mockRepo,
 					JwtService:  mockJwtService,
 					HashService: mockHashService,
 				})
 				login, err := authService.Login(ttl.Data)
-				if (err != nil) != ttl.WantErr {
-					t.Error
-				}
 				if ttl.Res == "" && login != "" {
 					t.Errorf("AuthService.Login() = %v, want nil", login)
 				} else if login != ttl.Res {
@@ -69,10 +66,10 @@ func TestAuth(t *testing.T) {
 			})
 		}
 	})
-	testsRegister := []test_case.TestCase[*dto.RegisterDto, string]{
+	testsRegister := []test_case.TestCase[*auth_dto.RegisterDto, string]{
 		{
 			Name: "Existing jwt token",
-			Data: &dto.RegisterDto{
+			Data: &auth_dto.RegisterDto{
 				Email:    "test1@example.com",
 				Password: "password",
 				Name:     "fara",
@@ -83,7 +80,7 @@ func TestAuth(t *testing.T) {
 		},
 		{
 			Name: "Existing jwt token",
-			Data: &dto.RegisterDto{
+			Data: &auth_dto.RegisterDto{
 				Email:    "test@example.com",
 				Password: "password",
 				Name:     "fara",
@@ -99,7 +96,7 @@ func TestAuth(t *testing.T) {
 				mockJwtService := mock_jwt.NewMockJwtService("secret")
 				mockHashService := mock_hash.NewHashService()
 				mockRepo := mocks_repository.NewRepository()
-				authService := services.NewAuthService(services.AuthServiceOptions{
+				authService := auth_services.NewAuthService(auth_services.AuthServiceOptions{
 					Repo:        mockRepo,
 					JwtService:  mockJwtService,
 					HashService: mockHashService,

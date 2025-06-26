@@ -4,6 +4,7 @@ import (
 	"gin/internal/user/user_repository"
 	"gin/internal/user/user_repository/user_postgres"
 	"gin/internal/vacancy/vacancy_repository"
+	"gin/internal/vacancy/vacancy_repository/vacancy_postgres"
 
 	"gorm.io/gorm"
 )
@@ -11,7 +12,7 @@ import (
 type Repository struct {
 	db                *gorm.DB
 	userRepository    user_repository.UserRepository
-	vacancyRepository *vacancy_repository.VacancyRepository
+	vacancyRepository vacancy_repository.VacancyRepository
 }
 
 func NewRepository(db *gorm.DB) *Repository {
@@ -23,9 +24,7 @@ func (r *Repository) Vacancy() vacancy_repository.VacancyRepository {
 		return r.vacancyRepository
 	}
 
-	r.vacancyRepository = &VacancyRepo{
-		store: r,
-	}
+	r.vacancyRepository = vacancy_postgres.NewVacancyRepo(r.db)
 
 	return r.vacancyRepository
 }

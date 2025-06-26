@@ -3,6 +3,7 @@ package auth_services
 import (
 	"gin/internal/auth/auth_dto"
 	"gin/internal/infrastructure/repository"
+	response_error "gin/pkg/error"
 	"gin/pkg/hash"
 	"gin/pkg/jwt"
 )
@@ -52,7 +53,7 @@ func (a *authService) Login(userDto *auth_dto.LoginDto) (string, error) {
 	}
 	isPasswordValid := a.HashService.CheckPasswordHash(userDto.Password, user.Password)
 	if !isPasswordValid {
-		return "", err
+		return "", response_error.ErrUnauthorized
 	}
 	token, err := a.JwtService.CreateToken(user.ID)
 	if err != nil {
